@@ -42,7 +42,7 @@
         <div class="card" style="border-top: 5px solid #e67e22;">
             <h3 style="color:#d35400">Course Recovery</h3>
             <p>Manage student recovery plans and milestones.</p>
-            <a href="recovery_plan.jsp" class="btn" style="background-color:#d35400">Manage Plans</a>
+            <a href="view_plans.jsp" class="btn" style="background-color:#d35400">Manage Plans</a>
         </div>
 
         <div class="card">
