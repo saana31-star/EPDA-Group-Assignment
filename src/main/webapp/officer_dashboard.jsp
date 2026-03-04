@@ -27,6 +27,12 @@
 </head>
 <body>
 
+	<% if ("PlanSaved".equals(request.getParameter("msg"))) { %>
+	    <div style="background-color: #d4edda; color: #155724; padding: 10px; text-align: center; border-bottom: 1px solid #c3e6cb;">
+	        ✅ Course Recovery Plan has been successfully created and emailed to the student!
+	    </div>
+	<% } %>
+
     <div class="header">
         <h2>Academic Officer Panel</h2>
         <span>Welcome, <%= user.getUsername() %> | <a href="logout" class="logout-btn">Logout</a></span>
