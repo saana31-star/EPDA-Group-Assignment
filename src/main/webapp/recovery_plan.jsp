@@ -2,7 +2,6 @@
 <%@ page import="java.sql.*, com.crs.config.DBConnection" %>
 <%@ page import="com.crs.model.User" %>
 <%
-    // Security Check
     User user = (User) session.getAttribute("user");
     if (user == null || !"OFFICER".equals(user.getRole())) {
         response.sendRedirect("login.jsp?error=Unauthorized");
@@ -10,24 +9,17 @@
     }
 
     String studentId = request.getParameter("studentId");
-    String studentName = "";
-    String failedCourse = "";
-    String failedCourseCode = "";
+    String studentName = ""; String failedCourse = ""; String failedCourseCode = "";
 
-    // Quick inline database fetch to get the failed course details for this student
     if (studentId != null) {
         try (Connection conn = DBConnection.getConnection()) {
-            // 1. Get Student Name
             PreparedStatement ps1 = conn.prepareStatement("SELECT name FROM students WHERE student_id = ?");
             ps1.setString(1, studentId);
             ResultSet rs1 = ps1.executeQuery();
             if (rs1.next()) studentName = rs1.getString("name");
 
-            // 2. Get the specific FAILED course
             PreparedStatement ps2 = conn.prepareStatement(
-                "SELECT c.course_code, c.course_title FROM academic_records r " +
-                "JOIN courses c ON r.course_code = c.course_code " +
-                "WHERE r.student_id = ? AND r.status = 'FAIL' LIMIT 1");
+                "SELECT c.course_code, c.course_title FROM academic_records r JOIN courses c ON r.course_code = c.course_code WHERE r.student_id = ? AND r.status = 'FAIL' LIMIT 1");
             ps2.setString(1, studentId);
             ResultSet rs2 = ps2.executeQuery();
             if (rs2.next()) {
@@ -42,20 +34,39 @@
 <head>
     <title>Create Recovery Plan</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f6f9; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h2 { border-bottom: 2px solid #e67e22; padding-bottom: 10px; color: #d35400; }
-        .info-box { background: #fff3cd; padding: 15px; border-left: 5px solid #ffc107; margin-bottom: 20px; }
-        label { display: block; margin-top: 15px; font-weight: bold; }
-        input, textarea, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background-color: #e67e22; color: white; border: none; padding: 12px 20px; margin-top: 20px; cursor: pointer; width: 100%; font-size: 16px; }
-        button:hover { background-color: #d35400; }
+        :root {
+            --peach: #F5D0C5; --pink: #F0AEB6; --mauve: #D88DB4; 
+            --dusty-purple: #AE82A4; --dark-blue: #5C617B; 
+            --med-blue: #828CA0; --light-blue: #AAB4C2; --bg-color: #f4f6f9;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); padding: 40px 20px; }
+        
+        .container { 
+            max-width: 650px; margin: 0 auto; background: white; padding: 40px; 
+            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--dusty-purple);
+        }
+        
+        h2 { color: var(--dark-blue); margin-top: 0; border-bottom: 2px solid var(--light-blue); padding-bottom: 15px; }
+        
+        .info-box { background: var(--peach); color: var(--dark-blue); padding: 20px; border-radius: 0 8px 8px 0; border-left: 6px solid var(--dusty-purple); margin-bottom: 25px; font-size: 1.05em; line-height: 1.5; }
+        
+        label { display: block; margin-top: 20px; font-weight: bold; color: var(--dark-blue); font-size: 0.95em; margin-bottom: 8px; }
+        input[type="text"], textarea, select { width: 100%; padding: 12px; border: 1px solid var(--light-blue); border-radius: 6px; box-sizing: border-box; font-family: inherit; transition: 0.3s; outline: none; }
+        input[type="text"]:focus, textarea:focus, select:focus { border-color: var(--dusty-purple); box-shadow: 0 0 5px rgba(174, 130, 164, 0.3); }
+        
+        button { background-color: var(--dusty-purple); color: white; border: none; padding: 15px; margin-top: 30px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        button:hover { opacity: 0.85; transform: translateY(-2px); }
+        
+        .btn-back { color: var(--med-blue); text-decoration: none; font-weight: bold; display: inline-block; margin-bottom: 20px; transition: 0.3s; }
+        .btn-back:hover { color: var(--dark-blue); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <a href="checkEligibility" style="text-decoration:none; color:#666;">← Back to List</a>
+    <a href="checkEligibility" class="btn-back">← Back to List</a>
     
     <h2>Create Course Recovery Plan</h2>
     

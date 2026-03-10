@@ -1,34 +1,60 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.crs.model.Student" %>
-<%@ page import="com.crs.model.AcademicRecord" %>  <%-- IMPORT ADDED HERE --%>
+<%@ page import="com.crs.model.User" %>
+<%@ page import="com.crs.model.AcademicRecord" %>
 <%@ page import="java.util.List" %>
-
 <%
-    // Retrieve data from request
+	User user = (User) session.getAttribute("user");
+	if (user == null) { response.sendRedirect("login.jsp"); return; }
+
     Student s = (Student) request.getAttribute("student");
     List<AcademicRecord> records = (List<AcademicRecord>) request.getAttribute("records");
-
-    // Safety check to prevent NullPointer if accessed directly without Servlet
-    if (s == null) {
-        response.sendRedirect("academic_report.jsp");
-        return;
-    }
+    if (s == null) { response.sendRedirect("academic_report.jsp"); return; }
 %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Academic Performance Report</title>
     <style>
-        body { font-family: 'Times New Roman', serif; background: #555; padding: 20px; }
-        .paper { background: white; max-width: 800px; margin: 0 auto; padding: 50px; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
-        h1 { text-align: center; text-transform: uppercase; border-bottom: 2px solid black; padding-bottom: 10px; }
-        .header-info { margin-bottom: 30px; line-height: 1.6; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid black; padding: 8px; text-align: left; }
-        th { background-color: #eee; }
-        .cgpa-box { margin-top: 20px; text-align: right; font-size: 1.2em; font-weight: bold; }
-        .print-btn { display: block; margin: 20px auto; padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; width: 200px; text-align: center; text-decoration: none; font-family: Arial, sans-serif;}
-        @media print { .print-btn { display: none; } body { background: white; } .paper { box-shadow: none; } }
+        :root {
+            --mauve: #D88DB4; --dark-blue: #5C617B; --med-blue: #828CA0; --bg-color: #f4f6f9;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); padding: 40px 20px; margin: 0; }
+        
+        .paper { 
+            background: white; max-width: 850px; margin: 0 auto; padding: 60px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 4px;
+        }
+        
+        h1 { text-align: center; color: var(--dark-blue); text-transform: uppercase; border-bottom: 3px solid var(--dark-blue); padding-bottom: 15px; margin-top: 0; letter-spacing: 1px; }
+        
+        .header-info { margin-bottom: 40px; line-height: 1.8; color: #333; font-size: 1.1em; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        h3 { color: var(--dark-blue); border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f9f9f9; color: var(--dark-blue); text-transform: uppercase; font-size: 0.9em; }
+        
+        .cgpa-box { text-align: right; font-size: 1.3em; color: var(--dark-blue); border-top: 2px solid var(--dark-blue); padding-top: 15px; }
+        
+        .button-group { text-align: center; margin-top: 40px; }
+        .action-btn { 
+            display: inline-block; margin: 0 10px; padding: 12px 25px; 
+            background: var(--mauve); color: white; border: none; border-radius: 6px; 
+            cursor: pointer; text-decoration: none; font-weight: bold; font-size: 15px; transition: 0.3s;
+        }
+        .action-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+        .btn-secondary { background: var(--med-blue); }
+
+        /* Print styles */
+        @media print { 
+            body { background: white; padding: 0; } 
+            .paper { box-shadow: none; padding: 0; max-width: 100%; } 
+            .button-group { display: none; } 
+            th { background-color: #eee !important; -webkit-print-color-adjust: exact; }
+        }
     </style>
 </head>
 <body>
@@ -37,54 +63,41 @@
     <h1>Academic Performance Report</h1>
     
     <div class="header-info">
-        <strong>Student Name:</strong> <%= s.getName() %><br>
-        <strong>Student ID:</strong> <%= s.getStudentId() %><br>
-        <strong>Program:</strong> <%= s.getProgram() %><br>
-        <strong>Date Generated:</strong> <%= new java.util.Date() %>
+        <div><strong>Student Name:</strong> <%= s.getName() %></div>
+        <div><strong>Student ID:</strong> <%= s.getStudentId() %></div>
+        <div><strong>Program:</strong> <%= s.getProgram() %></div>
+        <div><strong>Date Generated:</strong> <%= new java.text.SimpleDateFormat("dd MMM yyyy").format(new java.util.Date()) %></div>
     </div>
 
     <h3>Semester 1 Results</h3>
     <table>
         <thead>
             <tr>
-                <th>Course Code</th>
-                <th>Course Title</th>
-                <th>Credit Hours</th>
-                <th>Grade</th>
-                <th>Grade Point</th>
+                <th>Course Code</th> <th>Course Title</th> <th>Credit Hours</th> <th>Grade</th> <th>Grade Point</th>
             </tr>
         </thead>
         <tbody>
-            <% 
-            if (records != null) {
-                for (AcademicRecord r : records) { 
-            %>
+            <% if (records != null) { for (AcademicRecord r : records) { %>
             <tr>
-                <td><%= r.getCourseCode() %></td> 
+                <td><strong><%= r.getCourseCode() %></strong></td> 
                 <td><%= r.getCourseTitle() %></td>
                 <td><%= r.getCreditHours() %></td>
-                <td><%= r.getGrade() %></td>
-                <td><%= r.getGradePoint() %></td>
+                <td><strong><%= r.getGrade() %></strong></td>
+                <td><%= String.format("%.2f", r.getGradePoint()) %></td>
             </tr>
-            <% 
-                } 
-            } 
-            %>
+            <% } } %>
         </tbody>
     </table>
 
     <div class="cgpa-box">
-        Cumulative GPA (CGPA): <%= s.getCgpa() %>
+        <strong>Cumulative GPA (CGPA): <%= String.format("%.2f", s.getCgpa()) %></strong>
     </div>
 </div>
 
-<a href="#" onclick="window.print()" class="print-btn">Print Report</a>
-
-<% 
-    com.crs.model.User currentUser = (com.crs.model.User) session.getAttribute("user");
-    String dashboardLink = (currentUser != null && "ADMIN".equals(currentUser.getRole())) ? "admin_dashboard.jsp" : "officer_dashboard.jsp";
-%>
-<a href="<%= dashboardLink %>" class="print-btn" style="background:#6c757d;">Back to Dashboard</a>
+<div class="button-group">
+    <button onclick="window.print()" class="action-btn">🖨️ Print Report</button>
+    <a href="<%= user.getRole().equals("ADMIN") ? "admin_dashboard.jsp" : "officer_dashboard.jsp" %>" class="action-btn btn-secondary">← Back to Dashboard</a>
+</div>
 
 </body>
 </html>
