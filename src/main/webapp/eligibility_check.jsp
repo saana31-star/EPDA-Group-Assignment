@@ -9,7 +9,7 @@
     }
     List<Student> list = (List<Student>) request.getAttribute("studentList");
     
-    // Check if the user is an OFFICER (to decide whether to show the Action column)
+    // Check if the user is an OFFICER
     boolean isOfficer = "OFFICER".equals(user.getRole());
 %>
 <!DOCTYPE html>
@@ -21,7 +21,12 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #333; margin-bottom: 20px;}
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        
+        /* Search Bar Styles */
+        .search-container { margin-bottom: 20px; text-align: right; }
+        #searchInput { width: 300px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
         th { background-color: #007bff; color: white; }
         .status-pass { color: green; font-weight: bold; }
@@ -38,7 +43,11 @@
     
     <h2>Student Eligibility Status</h2>
     
-    <table>
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search by Student ID or Name...">
+    </div>
+    
+    <table id="eligibilityTable">
         <thead>
             <tr>
                 <th>ID</th>
@@ -47,11 +56,7 @@
                 <th>CGPA</th>
                 <th>Failed Courses</th>
                 <th>Status</th>
-                
-                <%-- ONLY SHOW Action Header if user is an OFFICER --%>
-                <% if (isOfficer) { %>
-                    <th>Action</th>
-                <% } %>
+                <% if (isOfficer) { %><th>Action</th><% } %>
             </tr>
         </thead>
         <tbody>
@@ -71,7 +76,6 @@
                     <% } %>
                 </td>
                 
-                <%-- ONLY SHOW Action Cell if user is an OFFICER --%>
                 <% if (isOfficer) { %>
                 <td>
                     <% if (s.getFailedCount() > 0 || !s.isEligible()) { %>
@@ -89,6 +93,35 @@
         </tbody>
     </table>
 </div>
+
+<script>
+function filterTable() {
+    // Declare variables
+    var input, filter, table, tr, tdId, tdName, i, txtValueId, txtValueName;
+    input = document.getElementById("searchInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("eligibilityTable");
+    tr = table.getElementsByTagName("tr");
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 1; i < tr.length; i++) { // Start from 1 to skip the header row
+        tdId = tr[i].getElementsByTagName("td")[0];   // Column 0 is ID
+        tdName = tr[i].getElementsByTagName("td")[1]; // Column 1 is Name
+        
+        if (tdId || tdName) {
+            txtValueId = tdId.textContent || tdId.innerText;
+            txtValueName = tdName.textContent || tdName.innerText;
+            
+            // Check if filter matches ID OR Name
+            if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueName.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
 
 </body>
 </html>
