@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import com.crs.config.DBConnection;
 import com.crs.model.Student;
+import jakarta.ejb.Stateless;
 
+@Stateless
 public class StudentDAO {
 
     public List<Student> getAllStudentsWithEligibility() {
