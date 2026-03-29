@@ -60,14 +60,6 @@ CREATE TABLE recovery_milestones (
     FOREIGN KEY (plan_id) REFERENCES recovery_plans(plan_id)
 );
 
--- 7. Password Reset Tokens
-CREATE TABLE password_reset_tokens (
-    token VARCHAR(255) PRIMARY KEY,
-    user_id INT NOT NULL,
-    expiry_date DATETIME NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
 -- =========================================
 -- DUMMY DATA INSERTION
 -- =========================================
