@@ -14,11 +14,10 @@ public class EmailReportServlet extends HttpServlet {
 
     private static final String DB_URL  = "jdbc:mysql://localhost:3306/crs_db";
     private static final String DB_USER = "root";
-    private static final String DB_PASS = "admin";  // CHANGE THIS to your actual password
+    private static final String DB_PASS = "admin";  // CHANGE THIS to your actual password in MySQL
 
     private static final String SENDER_EMAIL = "crsgroupbm@gmail.com";
-    private static final String SENDER_PASSWORD  = "loyu hmtq mppr zxpl"; // app password from gmail (no spaces)
-
+    private static final String SENDER_PASSWORD  = "loyu hmtq mppr zxpl"; 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
