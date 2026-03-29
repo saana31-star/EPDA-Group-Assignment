@@ -1,11 +1,36 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.crs.model.User" %>
+<%@ page import="java.sql.*" %>
 <%
     User user = (User) session.getAttribute("user");
     if (user == null || !"OFFICER".equals(user.getRole())) {
         response.sendRedirect("login.jsp");
         return;
     }
+%>
+<%
+    int totalStudents = 0, atRiskStudents = 0, activePlans = 0, completedPlans = 0;
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/crs_db", "root", "admin");
+
+        ResultSet rs1 = conn.createStatement().executeQuery("SELECT COUNT(*) FROM students");
+        if (rs1.next()) totalStudents = rs1.getInt(1);
+
+        ResultSet rs2 = conn.createStatement().executeQuery(
+            "SELECT COUNT(DISTINCT student_id) FROM academic_records WHERE status = 'FAIL'");
+        if (rs2.next()) atRiskStudents = rs2.getInt(1);
+
+        ResultSet rs3 = conn.createStatement().executeQuery(
+            "SELECT COUNT(*) FROM recovery_plans WHERE status != 'COMPLETED'");
+        if (rs3.next()) activePlans = rs3.getInt(1);
+
+        ResultSet rs4 = conn.createStatement().executeQuery(
+            "SELECT COUNT(*) FROM recovery_plans WHERE status = 'COMPLETED'");
+        if (rs4.next()) completedPlans = rs4.getInt(1);
+
+        conn.close();
+    } catch (Exception e) { e.printStackTrace(); }
 %>
 <!DOCTYPE html>
 <html>
@@ -46,7 +71,7 @@
 
         .card {
             background: white;
-            flex: 0 1 calc(50% - 15px); /* Max 2 per row */
+            flex: 0 1 calc(50% - 15px);
             min-width: 300px;
             max-width: 400px;
             padding: 40px 20px;
@@ -55,7 +80,7 @@
             text-align: center;
             border-top: 5px solid var(--med-blue);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-sizing: border-box; /* Ensures padding doesn't break the 50% width */
+            box-sizing: border-box;
         }
         .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
 
@@ -83,6 +108,26 @@
     </div>
 
     <div class="container">
+
+        <div style="display:flex; gap:20px; margin-bottom:30px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:150px; background:white; padding:20px; border-radius:10px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.05); border-top:4px solid var(--dark-blue);">
+                <div style="font-size:2em; font-weight:bold; color:var(--dark-blue);"><%= totalStudents %></div>
+                <div style="color:#666; font-size:0.9em; margin-top:5px;">Total Students</div>
+            </div>
+            <div style="flex:1; min-width:150px; background:white; padding:20px; border-radius:10px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.05); border-top:4px solid var(--pink);">
+                <div style="font-size:2em; font-weight:bold; color:#c0392b;"><%= atRiskStudents %></div>
+                <div style="color:#666; font-size:0.9em; margin-top:5px;">At-Risk Students</div>
+            </div>
+            <div style="flex:1; min-width:150px; background:white; padding:20px; border-radius:10px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.05); border-top:4px solid var(--dusty-purple);">
+                <div style="font-size:2em; font-weight:bold; color:var(--dusty-purple);"><%= activePlans %></div>
+                <div style="color:#666; font-size:0.9em; margin-top:5px;">Active Plans</div>
+            </div>
+            <div style="flex:1; min-width:150px; background:white; padding:20px; border-radius:10px; text-align:center; box-shadow:0 4px 15px rgba(0,0,0,0.05); border-top:4px solid #27ae60;">
+                <div style="font-size:2em; font-weight:bold; color:#27ae60;"><%= completedPlans %></div>
+                <div style="color:#666; font-size:0.9em; margin-top:5px;">Completed Plans</div>
+            </div>
+        </div>
+
         <% if ("PlanSaved".equals(request.getParameter("msg"))) { %>
             <div style="background-color: var(--peach); color: var(--dark-blue); padding: 15px; text-align: center; border-radius: 6px; margin-bottom: 25px; font-weight: bold;">
                 ✅ Recovery Plan created successfully!
