@@ -157,7 +157,6 @@
                         <th>Task</th>
                         <th>Status</th>
                         <th>Actions</th>
-                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -170,25 +169,23 @@
                         <td><%= m.getTask() %></td>
                         <td>
                             <% if (m.isCompleted()) { %>
-                                <span class="badge-done">Done</span>
+                                <span class="badge-done">✔ Done</span>
                             <% } else { %>
-                                <span class="badge-pending">Pending</span>
+                                <span class="badge-pending">⏳ Pending</span>
                             <% } %>
                         </td>
                         <td>
                             <a href="MilestoneServlet?action=toggle&id=<%= m.getMilestoneId() %>&planId=<%= planId %>"
                                class="toggle-btn <%= m.isCompleted() ? "toggle-undo" : "toggle-complete" %>">
-                                <%= m.isCompleted() ? "Undo" : "Done" %>
+                                <%= m.isCompleted() ? "Undo" : "✔ Done" %>
                             </a>
-                        </td>
-                        <td>
                             <a href="MilestoneServlet?action=delete&id=<%= m.getMilestoneId() %>&planId=<%= planId %>"
                                class="remove-btn"
                                onclick="return confirm('Remove this milestone?');">✕</a>
                         </td>
                     </tr>
                 <% } } else { %>
-                    <tr><td colspan="6" class="empty-msg">No milestones yet. Add one using the form!</td></tr>
+                    <tr><td colspan="5" class="empty-msg">No milestones yet. Add one using the form!</td></tr>
                 <% } %>
                 </tbody>
             </table>
