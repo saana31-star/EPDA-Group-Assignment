@@ -5,16 +5,16 @@ import java.sql.*;
 import java.util.*;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
-import javax.servlet.*;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
 
 @WebServlet("/EmailReportServlet")
 public class EmailReportServlet extends HttpServlet {
 
     private static final String DB_URL  = "jdbc:mysql://localhost:3306/crs_db";
     private static final String DB_USER = "root";
-    private static final String DB_PASS = "";  // ← your MySQL password
+    private static final String DB_PASS = "admin";
 
     private static final String SENDER_EMAIL = "shrinivashoh05@gmail.com";
     private static final String SENDER_PASS  = "wfjgfvhknutauuhl"; // app password (no spaces)
@@ -111,8 +111,11 @@ public class EmailReportServlet extends HttpServlet {
             Properties props = new Properties();
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.starttls.required", "true");
             props.put("mail.smtp.host", "smtp.gmail.com");
             props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 
             Session mailSession = Session.getInstance(props, new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
@@ -127,11 +130,11 @@ public class EmailReportServlet extends HttpServlet {
             msg.setContent(htmlBody, "text/html; charset=utf-8");
             Transport.send(msg);
 
-            response.sendRedirect("view_report.jsp?studentId=" + studentId + "&msg=emailed");
+            response.sendRedirect("GenerateReportServlet?studentId=" + studentId + "&msg=emailed");
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("view_report.jsp?studentId=" + studentId + "&msg=error");
+            response.sendRedirect("GenerateReportServlet?studentId=" + studentId + "&msg=error");
         }
     }
 }

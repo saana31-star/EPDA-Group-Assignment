@@ -62,7 +62,7 @@
 <% String msg = request.getParameter("msg"); %>
 <% if ("emailed".equals(msg)) { %>
     <div style="max-width:850px;margin:0 auto 15px auto;background:#d4edda;color:#155724;padding:12px;border-radius:6px;text-align:center;font-weight:bold;">
-        ✅ Report successfully emailed to <%= s.getEmail() %>!
+        ✅ Report successfully emailed to the student!
     </div>
 <% } else if ("error".equals(msg)) { %>
     <div style="max-width:850px;margin:0 auto 15px auto;background:#f8d7da;color:#721c24;padding:12px;border-radius:6px;text-align:center;font-weight:bold;">
