@@ -59,6 +59,17 @@
 </head>
 <body>
 
+<% String msg = request.getParameter("msg"); %>
+<% if ("emailed".equals(msg)) { %>
+    <div style="max-width:850px;margin:0 auto 15px auto;background:#d4edda;color:#155724;padding:12px;border-radius:6px;text-align:center;font-weight:bold;">
+        ✅ Report successfully emailed to <%= s.getEmail() %>!
+    </div>
+<% } else if ("error".equals(msg)) { %>
+    <div style="max-width:850px;margin:0 auto 15px auto;background:#f8d7da;color:#721c24;padding:12px;border-radius:6px;text-align:center;font-weight:bold;">
+        ❌ Failed to send email. Please try again.
+    </div>
+<% } %>
+
 <div class="paper">
     <h1>Academic Performance Report</h1>
     
@@ -96,6 +107,10 @@
 
 <div class="button-group">
     <button onclick="window.print()" class="action-btn">🖨️ Print Report</button>
+    <form action="EmailReportServlet" method="post" style="display:inline;">
+        <input type="hidden" name="studentId" value="<%= s.getStudentId() %>">
+        <button type="submit" class="action-btn" style="background:#5C617B;">📧 Email Report to Student</button>
+    </form>
     <a href="<%= user.getRole().equals("ADMIN") ? "admin_dashboard.jsp" : "officer_dashboard.jsp" %>" class="action-btn btn-secondary">← Back to Dashboard</a>
 </div>
 
