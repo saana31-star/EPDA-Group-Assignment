@@ -188,7 +188,7 @@
                         </td>
                     </tr>
                 <% } } else { %>
-                    <tr><td colspan="6" class="empty-msg">No milestones yet. Add one using the form!</td></tr>
+                    <tr><td colspan="5" class="empty-msg">No milestones yet. Add one using the form!</td></tr>
                 <% } %>
                 </tbody>
             </table>
