@@ -107,6 +107,15 @@
 
 <div class="button-group">
     <button onclick="window.print()" class="action-btn">🖨️ Print Report</button>
+    
+    <form action="AIRecommendationServlet" method="get" style="display:inline;">
+	    <input type="hidden" name="studentId"   value="<%= s.getStudentId() %>">
+	    <input type="hidden" name="studentName" value="<%= s.getName() %>">
+	    <input type="hidden" name="program"     value="<%= s.getProgram() %>">
+	    <input type="hidden" name="cgpa"        value="<%= s.getCgpa() %>">
+	    <button type="submit" class="action-btn" style="background: var(--dusty-purple, #AE82A4);">🤖 AI Recommendation</button>
+	</form>
+    
     <form action="EmailReportServlet" method="post" style="display:inline;">
         <input type="hidden" name="studentId" value="<%= s.getStudentId() %>">
         <button type="submit" class="action-btn" style="background:#5C617B;">📧 Email Report to Student</button>
