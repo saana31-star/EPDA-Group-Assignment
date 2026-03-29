@@ -5,9 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import com.crs.config.DBConnection;
 import com.crs.model.User;
-import jakarta.ejb.Stateless;
 
-@Stateless
 public class UserDAO {
 
     public User validateUser(String username, String password) {

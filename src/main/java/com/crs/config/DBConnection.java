@@ -8,7 +8,7 @@ public class DBConnection {
     // Update these with your specific MySQL config if different
     private static final String URL = "jdbc:mysql://localhost:3306/crs_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
     private static final String USER = "root"; 
-    private static final String PASSWORD = "admin";
+    private static final String PASSWORD = "admin"; // CHANGE THIS to your actual password
 
     public static Connection getConnection() {
         Connection conn = null;

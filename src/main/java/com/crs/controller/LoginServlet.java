@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import jakarta.ejb.EJB;
 
 import com.crs.dao.UserDAO;
 import com.crs.model.User;
@@ -15,8 +14,11 @@ import com.crs.model.User;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    @EJB
     private UserDAO userDAO;
+
+    public void init() {
+        userDAO = new UserDAO();
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
