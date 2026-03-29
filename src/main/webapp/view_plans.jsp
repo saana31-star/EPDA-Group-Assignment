@@ -37,12 +37,11 @@
         .btn-back { display: inline-block; margin-bottom: 20px; padding: 10px 15px; background: var(--med-blue); color: white; text-decoration: none; border-radius: 6px; transition: 0.3s; }
         .btn-back:hover { opacity: 0.85; }
         
-        .remove-btn { color: var(--pink); font-weight: bold; text-decoration: none; padding: 5px 10px; border: 1px solid var(--pink); border-radius: 6px; transition: 0.3s; }
-        .remove-btn:hover { background: var(--pink); color: white; }
-        
-        .helper-text { margin-top: 25px; font-size: 0.95em; color: var(--med-blue); background: var(--bg-color); padding: 15px; border-radius: 8px; border-left: 4px solid var(--med-blue); }
-        .milestone-btn { color: var(--dusty-purple); font-weight: bold; text-decoration: none; padding: 5px 10px; border: 1px solid var(--dusty-purple); border-radius: 6px; transition: 0.3s; margin-right: 5px; }
+		.milestone-btn { color: var(--dusty-purple); font-weight: bold; text-decoration: none; padding: 7px 12px; border: 1px solid var(--dusty-purple); border-radius: 6px; transition: 0.3s; font-size: 0.85em; white-space: nowrap; }
 		.milestone-btn:hover { background: var(--dusty-purple); color: white; }
+
+		.remove-btn { color: var(--pink); font-weight: bold; text-decoration: none; padding: 7px 12px; border: 1px solid var(--pink); border-radius: 6px; transition: 0.3s; font-size: 0.85em; white-space: nowrap; }
+		.remove-btn:hover { background: var(--pink); color: white; }
     </style>
 </head>
 <body>
@@ -83,9 +82,11 @@
                 <td><%= rs.getString("failed_components") %></td>
                 <td><span class="status-badge"><%= rs.getString("status") %></span></td>
                 <td>
-                    <a href="MilestoneServlet?planId=<%= planId %>" class="milestone-btn">📋 Milestones</a>
-					<a href="DeletePlanServlet?id=<%= planId %>" onclick="return confirm('Remove this recovery plan?');" class="remove-btn">Remove</a>
-                </td>
+			    	<div style="display:flex; gap:8px; align-items:center;">
+			        	<a href="MilestoneServlet?planId=<%= planId %>" class="milestone-btn">📋 Milestones</a>
+			        	<a href="DeletePlanServlet?id=<%= planId %>" onclick="return confirm('Remove this recovery plan?');" class="remove-btn"> Remove</a>
+			    	</div>
+				</td>
             </tr>
         <% 
                 }

@@ -37,14 +37,83 @@ public class MilestoneServlet extends HttpServlet {
 
         if ("delete".equals(action)) {
             String milestoneId = request.getParameter("id");
-            executeSingle("DELETE FROM recovery_milestones WHERE milestone_id = ?", milestoneId);
+
+            try (Connection conn = DBConnection.getConnection()) {
+                // Delete the milestone
+                PreparedStatement deleteStmt = conn.prepareStatement(
+                    "DELETE FROM recovery_milestones WHERE milestone_id = ?");
+                deleteStmt.setInt(1, Integer.parseInt(milestoneId));
+                deleteStmt.executeUpdate();
+
+                // Re-check if all remaining milestones are complete
+                PreparedStatement checkAll = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM recovery_milestones WHERE plan_id = ? AND is_completed = FALSE");
+                checkAll.setInt(1, Integer.parseInt(planId));
+                ResultSet checkRs = checkAll.executeQuery();
+
+                if (checkRs.next()) {
+                    int incomplete = checkRs.getInt(1);
+                    if (incomplete == 0) {
+                        // All remaining done → COMPLETED
+                        PreparedStatement completePlan = conn.prepareStatement(
+                            "UPDATE recovery_plans SET status = 'COMPLETED' WHERE plan_id = ?");
+                        completePlan.setInt(1, Integer.parseInt(planId));
+                        completePlan.executeUpdate();
+                    } else {
+                        // Still has incomplete → APPROVED
+                        PreparedStatement revertPlan = conn.prepareStatement(
+                            "UPDATE recovery_plans SET status = 'APPROVED' WHERE plan_id = ?");
+                        revertPlan.setInt(1, Integer.parseInt(planId));
+                        revertPlan.executeUpdate();
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             response.sendRedirect("MilestoneServlet?planId=" + planId);
             return;
         }
-
+        
         if ("toggle".equals(action)) {
             String milestoneId = request.getParameter("id");
-            executeSingle("UPDATE recovery_milestones SET is_completed = NOT is_completed WHERE milestone_id = ?", milestoneId);
+
+            try (Connection conn = DBConnection.getConnection()) {
+                // Toggle the milestone
+                PreparedStatement toggleStmt = conn.prepareStatement(
+                    "UPDATE recovery_milestones SET is_completed = NOT is_completed WHERE milestone_id = ?");
+                toggleStmt.setInt(1, Integer.parseInt(milestoneId));
+                toggleStmt.executeUpdate();
+
+                // Check how many milestones are still incomplete
+                PreparedStatement checkAll = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM recovery_milestones WHERE plan_id = ? AND is_completed = FALSE");
+                checkAll.setInt(1, Integer.parseInt(planId));
+                ResultSet checkRs = checkAll.executeQuery();
+
+                if (checkRs.next()) {
+                    int incomplete = checkRs.getInt(1);
+
+                    if (incomplete == 0) {
+                        // All done → mark plan COMPLETED
+                        PreparedStatement completePlan = conn.prepareStatement(
+                            "UPDATE recovery_plans SET status = 'COMPLETED' WHERE plan_id = ?");
+                        completePlan.setInt(1, Integer.parseInt(planId));
+                        completePlan.executeUpdate();
+                    } else {
+                        // Some undone → revert plan back to APPROVED
+                        PreparedStatement revertPlan = conn.prepareStatement(
+                            "UPDATE recovery_plans SET status = 'APPROVED' WHERE plan_id = ?");
+                        revertPlan.setInt(1, Integer.parseInt(planId));
+                        revertPlan.executeUpdate();
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             response.sendRedirect("MilestoneServlet?planId=" + planId);
             return;
         }
@@ -107,14 +176,22 @@ public class MilestoneServlet extends HttpServlet {
         String planId = request.getParameter("planId");
         String week   = request.getParameter("week");
         String task   = request.getParameter("task");
-
+        
         try (Connection conn = DBConnection.getConnection()) {
+            // Insert new milestone
             PreparedStatement stmt = conn.prepareStatement(
                 "INSERT INTO recovery_milestones (plan_id, week, task, is_completed) VALUES (?, ?, ?, FALSE)");
             stmt.setInt(1, Integer.parseInt(planId));
             stmt.setString(2, week);
             stmt.setString(3, task);
             stmt.executeUpdate();
+
+            // New milestone is always incomplete → revert plan back to APPROVED
+            PreparedStatement revertPlan = conn.prepareStatement(
+                "UPDATE recovery_plans SET status = 'APPROVED' WHERE plan_id = ?");
+            revertPlan.setInt(1, Integer.parseInt(planId));
+            revertPlan.executeUpdate();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

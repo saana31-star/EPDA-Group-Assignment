@@ -14,10 +14,10 @@ public class EmailReportServlet extends HttpServlet {
 
     private static final String DB_URL  = "jdbc:mysql://localhost:3306/crs_db";
     private static final String DB_USER = "root";
-    private static final String DB_PASS = "admin";
+    private static final String DB_PASS = "admin";  // CHANGE THIS to your actual password
 
-    private static final String SENDER_EMAIL = "shrinivashoh05@gmail.com";
-    private static final String SENDER_PASS  = "wfjgfvhknutauuhl"; // app password (no spaces)
+    private static final String SENDER_EMAIL = "crsgroupbm@gmail.com";
+    private static final String SENDER_PASSWORD  = "loyu hmtq mppr zxpl"; // app password from gmail (no spaces)
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -119,7 +119,7 @@ public class EmailReportServlet extends HttpServlet {
 
             Session mailSession = Session.getInstance(props, new Authenticator() {
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(SENDER_EMAIL, SENDER_PASS);
+                    return new PasswordAuthentication(SENDER_EMAIL, SENDER_PASSWORD);
                 }
             });
 

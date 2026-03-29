@@ -90,7 +90,3 @@ String senderPassword = "your_app_password";
 - System currently supports report generation only
 
 ---
-
-## 📜 License
-
-This project is developed for academic purposes only as part of the CT027-3-3 EPDA assignment at APU.

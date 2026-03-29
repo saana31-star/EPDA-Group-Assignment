@@ -40,7 +40,7 @@ public class UserManagementServlet extends HttpServlet {
                 userList.add(new User(
                     rs.getInt("user_id"),
                     rs.getString("username"),
-                    rs.getString("password"), // Showing password for demo/debugging only
+                    rs.getString("password"), 
                     rs.getString("role"),
                     rs.getString("email")
                 ));

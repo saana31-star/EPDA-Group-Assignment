@@ -53,7 +53,7 @@ public class AIRecommendationServlet extends HttpServlet {
             riskLevel = "LOW";
         }
 
-        // CGPA-based recommendations (mutually exclusive)
+        // CGPA-based recommendations
         if (cgpa < 2.0) {
             recommendations.add("⚠️ CGPA is critically below 2.0. Immediate academic counselling is strongly recommended.");
             recommendations.add("📚 Enrol in all at-risk courses under the Course Recovery Programme.");
